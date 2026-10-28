@@ -1,0 +1,74 @@
+{
+  "average_f1_micro_over_all_folds_and_all_users": 0.7792321924144311,
+  "average_f1_macro_over_all_folds_and_all_users": 0.5303793987501578,
+  "average_kappa_quadratic_over_all_folds_and_all_users": 0.27058005566975923,
+  "confusion_matrix_over_all_folds_and_all_users": [
+    [
+      134,
+      96,
+      34
+    ],
+    [
+      43,
+      2296,
+      281
+    ],
+    [
+      19,
+      547,
+      1170
+    ]
+  ],
+  "min_data_points_for_users": 231,
+  "max_data_points_for_users": 231,
+  "model_info": {
+    "model_class": "Pipeline",
+    "params": {
+      "memory": null,
+      "steps": [
+        [
+          "standard_scaler",
+          "StandardScaler()"
+        ],
+        [
+          "logistic_regression_classifier",
+          "LogisticRegression(random_state=42)"
+        ]
+      ],
+      "transform_input": null,
+      "verbose": false,
+      "standard_scaler__copy": true,
+      "standard_scaler__with_mean": true,
+      "standard_scaler__with_std": true,
+      "logistic_regression_classifier__C": 1.0,
+      "logistic_regression_classifier__class_weight": null,
+      "logistic_regression_classifier__dual": false,
+      "logistic_regression_classifier__fit_intercept": true,
+      "logistic_regression_classifier__intercept_scaling": 1,
+      "logistic_regression_classifier__l1_ratio": null,
+      "logistic_regression_classifier__max_iter": 100,
+      "logistic_regression_classifier__multi_class": "deprecated",
+      "logistic_regression_classifier__n_jobs": null,
+      "logistic_regression_classifier__penalty": "l2",
+      "logistic_regression_classifier__random_state": 42,
+      "logistic_regression_classifier__solver": "lbfgs",
+      "logistic_regression_classifier__tol": 0.0001,
+      "logistic_regression_classifier__verbose": 0,
+      "logistic_regression_classifier__warm_start": false
+    }
+  },
+  "labels": [
+    9,
+    10,
+    11
+  ],
+  "features": [
+    "clothing",
+    "heartRate",
+    "t-nb",
+    "t-ubi",
+    "rh-ubi"
+  ],
+  "datetime_of_experiment_run": "2026-05-05T10:13:10.497802",
+  "experiment_name": "logistic_regression_classifier_with_standard_scaler"
+}

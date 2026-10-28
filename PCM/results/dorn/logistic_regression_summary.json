@@ -1,0 +1,58 @@
+{
+  "average_f1_micro_over_all_folds_and_all_users": 0.7649306197964847,
+  "average_f1_macro_over_all_folds_and_all_users": 0.5004062271965555,
+  "average_kappa_quadratic_over_all_folds_and_all_users": 0.20837157566394326,
+  "confusion_matrix_over_all_folds_and_all_users": [
+    [
+      103,
+      101,
+      60
+    ],
+    [
+      27,
+      2283,
+      310
+    ],
+    [
+      18,
+      570,
+      1148
+    ]
+  ],
+  "min_data_points_for_users": 231,
+  "max_data_points_for_users": 231,
+  "model_info": {
+    "model_class": "LogisticRegression",
+    "params": {
+      "C": 1.0,
+      "class_weight": null,
+      "dual": false,
+      "fit_intercept": true,
+      "intercept_scaling": 1,
+      "l1_ratio": null,
+      "max_iter": 100,
+      "multi_class": "deprecated",
+      "n_jobs": null,
+      "penalty": "l2",
+      "random_state": 42,
+      "solver": "lbfgs",
+      "tol": 0.0001,
+      "verbose": 0,
+      "warm_start": false
+    }
+  },
+  "labels": [
+    9,
+    10,
+    11
+  ],
+  "features": [
+    "clothing",
+    "heartRate",
+    "t-nb",
+    "t-ubi",
+    "rh-ubi"
+  ],
+  "datetime_of_experiment_run": "2026-05-05T10:12:48.480808",
+  "experiment_name": "logistic_regression"
+}

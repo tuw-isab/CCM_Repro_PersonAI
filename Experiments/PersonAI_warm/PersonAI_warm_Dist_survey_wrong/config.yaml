@@ -1,0 +1,75 @@
+SMOTENC_all_class: false
+SMOTENC_class: false
+SMOTENC_user: false
+categorical_features:
+- sex
+- fitness_level
+class_limit_no_resampling: false
+class_limit_remove: 0
+class_min_resampling: 5
+cluster_algo: spectral
+cluster_assign: performance
+cluster_forced: '-1'
+cluster_num: 2
+cluster_predict_criteria: cold
+coefficients:
+- 0
+- 0
+- 1
+data_set_with_time_bool: true
+dataset: personai/final_main_dataset_no_missing_ALLENC_new_bpm.csv
+dataset_name: PersonAI
+dataset_survey: personai/cold_start_data_full.csv
+dataset_type: sensor
+dataset_with_time: personai/final_main_dataset_no_missing_ALLENC_with_time_and_hr_age.csv
+divergence: jensen-shannon
+downsample: false
+downsample_60: false
+excluded_users:
+- id016
+extremes_filter: null
+feedback_sim: feedback-dist
+fixed_features:
+- sex
+- fitness_level
+- height_cm
+- weight_kg
+gamma: 0.0
+iterations: 72
+leave_1_out: true
+min_total_number: 0
+model: rdf
+name: PersonAI_warm_Dist_survey_wrong
+parameter_finetuning: false
+pcm_file: PersonAi/dict_pcm_rdf_sensor_at_f1_micro_personai
+precomputed_pcm: true
+precomputed_test_users: false
+qns_categories: []
+qns_encoding_idx: []
+qns_features:
+- swls_score
+- bfi2s_extraversion
+- bfi2s_agreeableness
+- bfi2s_conscientiousness
+- bfi2s_emotionality
+- bfi2s_openness
+qns_sim: cosine
+resample_ccm: false
+scorer: f1_micro
+seed: 42
+target_column: thermal_cozie
+target_values:
+- 9.0
+- 10.0
+- 11.0
+test_user_data: 1
+train_test_ratio: 0.8
+use_val: false
+variable_features:
+- t_ubi
+- rh_ubi
+- hr_ubi
+- bpm_time_diff_log
+- CO2
+- activity
+worst_cluster: true

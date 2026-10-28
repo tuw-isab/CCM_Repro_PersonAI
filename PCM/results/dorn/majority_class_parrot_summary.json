@@ -1,0 +1,44 @@
+{
+  "average_f1_micro_over_all_folds_and_all_users": 0.7223172987974098,
+  "average_f1_macro_over_all_folds_and_all_users": 0.34310681735709275,
+  "average_kappa_quadratic_over_all_folds_and_all_users": 0.0,
+  "confusion_matrix_over_all_folds_and_all_users": [
+    [
+      0,
+      189,
+      75
+    ],
+    [
+      0,
+      2323,
+      297
+    ],
+    [
+      0,
+      722,
+      1014
+    ]
+  ],
+  "min_data_points_for_users": 231,
+  "max_data_points_for_users": 231,
+  "model_info": {
+    "model_class": "MajorityClassParrot",
+    "params": {
+      "majority_class": null
+    }
+  },
+  "labels": [
+    9,
+    10,
+    11
+  ],
+  "features": [
+    "clothing",
+    "heartRate",
+    "t-nb",
+    "t-ubi",
+    "rh-ubi"
+  ],
+  "datetime_of_experiment_run": "2026-05-05T10:12:22.100994",
+  "experiment_name": "majority_class_parrot"
+}

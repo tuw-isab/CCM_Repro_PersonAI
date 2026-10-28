@@ -1,0 +1,66 @@
+SMOTENC_all_class: false
+SMOTENC_class: false
+SMOTENC_user: false
+categorical_features:
+- sex
+- clothing
+class_limit_no_resampling: false
+class_limit_remove: 0
+class_min_resampling: 5
+cluster_algo: kmeans
+cluster_assign: questions
+cluster_forced: extraversion
+cluster_num: 2
+cluster_predict_criteria: cold
+coefficients:
+- 0.5
+- 0
+- 0.5
+data_set_with_time_bool: false
+dataset: dorn/DORN_env_phy_231.csv
+dataset_name: Dorn
+dataset_survey: dorn/DORN_qns_b5p_calc_sex_swls_fixed.csv
+dataset_type: sensor
+dataset_with_time: None
+divergence: jensen-shannon
+downsample: false
+downsample_60: false
+excluded_users: []
+extremes_filter: null
+feedback_sim: feedback-dist
+fixed_features:
+- height
+- weight
+- sex
+gamma: 0.0
+iterations: 20
+leave_1_out: true
+min_total_number: 0
+model: rdf
+name: dorn_cold_extraversion_wrong
+parameter_finetuning: false
+pcm_file: dorn/dict_pcm_rdf_sensor_at_f1_micro_dorn
+precomputed_pcm: true
+precomputed_test_users: false
+qns_categories: []
+qns_encoding_idx: []
+qns_features: []
+qns_sim: cosine
+resample_ccm: false
+scorer: f1_micro
+seed: 10
+target_column: thermal_cozie
+target_values:
+- 9.0
+- 10.0
+- 11.0
+test_user_data: 1
+train_test_ratio: 0.8
+use_val: false
+variable_features:
+- clothing
+- heartRate
+- t-nb
+- t-ubi
+- rh-ubi
+worst_cluster: true

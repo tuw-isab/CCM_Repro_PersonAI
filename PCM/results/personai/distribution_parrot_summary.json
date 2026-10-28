@@ -1,0 +1,46 @@
+{
+  "average_f1_micro_over_all_folds_and_all_users": 0.6304524178444809,
+  "average_f1_macro_over_all_folds_and_all_users": 0.36167024013577553,
+  "average_kappa_quadratic_over_all_folds_and_all_users": -0.005192958948858064,
+  "confusion_matrix_over_all_folds_and_all_users": [
+    [
+      349,
+      675,
+      131
+    ],
+    [
+      672,
+      4418,
+      644
+    ],
+    [
+      133,
+      653,
+      305
+    ]
+  ],
+  "min_data_points_for_users": 41,
+  "max_data_points_for_users": 289,
+  "model_info": {
+    "model_class": "DistributionParrot",
+    "params": {
+      "probs": null,
+      "vals": null
+    }
+  },
+  "labels": [
+    9,
+    10,
+    11
+  ],
+  "features": [
+    "t_ubi",
+    "rh_ubi",
+    "hr_ubi",
+    "bpm_time_diff_log",
+    "CO2",
+    "activity"
+  ],
+  "datetime_of_experiment_run": "2026-09-04T15:37:45.279563",
+  "experiment_name": "distribution_parrot"
+}

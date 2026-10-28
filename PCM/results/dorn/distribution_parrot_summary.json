@@ -1,0 +1,45 @@
+{
+  "average_f1_micro_over_all_folds_and_all_users": 0.6359250693802034,
+  "average_f1_macro_over_all_folds_and_all_users": 0.3960306244970554,
+  "average_kappa_quadratic_over_all_folds_and_all_users": 0.01229968408481719,
+  "confusion_matrix_over_all_folds_and_all_users": [
+    [
+      56,
+      129,
+      79
+    ],
+    [
+      113,
+      1845,
+      662
+    ],
+    [
+      63,
+      636,
+      1037
+    ]
+  ],
+  "min_data_points_for_users": 231,
+  "max_data_points_for_users": 231,
+  "model_info": {
+    "model_class": "DistributionParrot",
+    "params": {
+      "probs": null,
+      "vals": null
+    }
+  },
+  "labels": [
+    9,
+    10,
+    11
+  ],
+  "features": [
+    "clothing",
+    "heartRate",
+    "t-nb",
+    "t-ubi",
+    "rh-ubi"
+  ],
+  "datetime_of_experiment_run": "2026-09-04T15:37:22.047483",
+  "experiment_name": "distribution_parrot"
+}

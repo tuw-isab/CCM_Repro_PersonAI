@@ -1,0 +1,87 @@
+"""Write one complete config file per DORN run into cohorts_creation/dorn_configs/.
+
+Every file is the template cohorts_creation/dorn_config.yaml with the settings of one row of the setup table filled in
+(name, cluster_forced, cluster_algo, cluster_assign, coefficients, qns_features, worst_cluster, plus extremes_filter and iterations,
+which only the optional extremes variant changes). To run an experiment, pass its file to cohort_modeling.py. Nothing has to be edited between runs.
+
+Usage, from the project folder:
+    person_ai_venv\\Scripts\\python.exe cohorts_creation\\make_dorn_configs.py
+Change a shared setting in dorn_config.yaml (or a setup below) and run the script again to regenerate all files.
+"""
+import argparse
+import os
+
+import yaml
+
+HERE = os.path.dirname(os.path.abspath(__file__))
+ap = argparse.ArgumentParser()
+ap.add_argument("--template", default=os.path.join(HERE, "dorn_config.yaml"))
+ap.add_argument("--out", default=os.path.join(HERE, "dorn_configs"))
+args = ap.parse_args()
+
+LIST_A = ["extraversion", "agreeableness", "conscientiousness", "emotional_stability", "openness_to_experiences", "swls"]
+LIST_B = LIST_A[:-1]
+SWLS_EXT = {"column": "swls", "lower_q": 0.25, "upper_q": 0.75}
+COLD = dict(cluster_algo="kmeans", cluster_assign="questions", coefficients=[0.5, 0, 0.5])
+WARM = dict(cluster_forced="-1", cluster_algo="spectral", cluster_assign="performance")
+
+# (setup, description, settings that differ from the defaults: qns_features [], extremes_filter None, iterations 20)
+SETUPS = [
+    ("1", "cold start, sex", dict(name="dorn_cold_sex", cluster_forced="sex", **COLD)),
+    ("2", "cold start, extraversion", dict(name="dorn_cold_extraversion", cluster_forced="extraversion", **COLD)),
+    ("3", "cold start, agreeableness", dict(name="dorn_cold_agreeableness", cluster_forced="agreeableness", **COLD)),
+    ("4", "cold start, conscientiousness", dict(name="dorn_cold_conscientiousness", cluster_forced="conscientiousness", **COLD)),
+    ("5", "cold start, emotional stability", dict(name="dorn_cold_emotional_stability", cluster_forced="emotional_stability", **COLD)),
+    ("6", "cold start, openness to experiences", dict(name="dorn_cold_openness_to_experiences", cluster_forced="openness_to_experiences", **COLD)),
+    ("7", "cold start, life satisfaction (SWLS)", dict(name="dorn_cold_swls", cluster_forced="swls", **COLD)),
+    ("8", "cold start, all surveys (list A)", dict(name="dorn_cold_survey", cluster_forced="-1", **COLD, qns_features=LIST_A)),
+    ("9", "cold start, Big Five (list B)", dict(name="dorn_cold_big5", cluster_forced="-1", **COLD, qns_features=LIST_B)),
+    ("10", "warm start, Dist-Cross", dict(name="dorn_warm_Dist_Cross", **WARM, coefficients=[0.5, 0, 0.5])),
+    ("11", "warm start, Cross", dict(name="dorn_warm_Cross", **WARM, coefficients=[0, 0, 1])),
+    ("optional", "cold start, life satisfaction (SWLS), extremes only", dict(name="dorn_cold_swls_filtered", cluster_forced="swls", **COLD, extremes_filter=SWLS_EXT, iterations=10)),
+]
+DEFAULTS = dict(qns_features=[], extremes_filter=None, iterations=20)
+# the settings that differ between runs, in the order of the setup table on the run-config page
+RUN_KEYS = ["name", "cluster_forced", "cluster_algo", "cluster_assign", "coefficients", "qns_features", "extremes_filter", "iterations", "worst_cluster"]
+
+# the shared settings as documented on the run-config page; a template that deviates is reported, not silently copied
+DOCUMENTED = dict(seed=10, leave_1_out=True, dataset="dorn/DORN_env_phy_231.csv", dataset_with_time="None", data_set_with_time_bool=False,
+                  dataset_survey="dorn/DORN_qns_b5p_calc_sex_swls_fixed.csv", variable_features=["clothing", "heartRate", "t-nb", "t-ubi", "rh-ubi"],
+                  fixed_features=["height", "weight", "sex"], categorical_features=["sex", "clothing"], precomputed_pcm=True,
+                  pcm_file="dorn/dict_pcm_rdf_sensor_at_f1_micro_dorn", excluded_users=[], min_total_number=0, test_user_data=1,
+                  parameter_finetuning=False, cluster_num=2, cluster_predict_criteria="cold")
+
+with open(args.template, encoding="utf-8") as f:
+    template = yaml.safe_load(f)
+deviations = {k: (template.get(k), v) for k, v in DOCUMENTED.items() if template.get(k) != v}
+if deviations:
+    print("WARNING: the template differs from the shared settings documented on the page:")
+    for k, (have, want) in deviations.items():
+        print(f"   {k}: template has {have!r}, page says {want!r}")
+
+os.makedirs(args.out, exist_ok=True)
+written = []
+for num, desc, over in SETUPS:
+    for wrong in (False, True):
+        cfg = dict(template)
+        cfg.update(DEFAULTS)
+        cfg.update(over)
+        if wrong:
+            cfg["name"] += "_wrong"
+        cfg["worst_cluster"] = wrong
+        header = (f"# DORN run {cfg['name']}: setup {num}, {desc}{' (wrong twin: every new person goes to the wrong cohort)' if wrong else ''}\n"
+                  f"# Generated by cohorts_creation/make_dorn_configs.py from cohorts_creation/dorn_config.yaml. Do not edit by hand:\n"
+                  f"# change the template or the script and run the script again.\n"
+                  f"# Start with: person_ai_venv\\Scripts\\python.exe cohorts_creation\\cohort_modeling.py cohorts_creation\\dorn_configs\\{cfg['name']}.yaml\n\n")
+        run_part = {k: cfg[k] for k in RUN_KEYS}
+        shared_part = {k: v for k, v in cfg.items() if k not in RUN_KEYS}
+        dump = lambda d: yaml.dump(d, sort_keys=False, default_flow_style=None, allow_unicode=True, width=200)
+        text = ("# ---- settings of this run (the columns of the setup table; extremes_filter and iterations only change in the optional variant) ----\n" + dump(run_part)
+                + "\n# ---- settings shared by all DORN runs ----\n" + dump(shared_part))
+        path = os.path.join(args.out, cfg["name"] + ".yaml")
+        with open(path, "w", encoding="utf-8", newline="\n") as f:
+            f.write(header + text)
+        written.append(cfg["name"])
+print(f"wrote {len(written)} config files to {args.out}")
+for n in written:
+    print("  ", n + ".yaml")

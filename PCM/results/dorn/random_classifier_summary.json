@@ -1,0 +1,42 @@
+{
+  "average_f1_micro_over_all_folds_and_all_users": 0.33682701202590193,
+  "average_f1_macro_over_all_folds_and_all_users": 0.25548657062642277,
+  "average_kappa_quadratic_over_all_folds_and_all_users": 0.005864426506040344,
+  "confusion_matrix_over_all_folds_and_all_users": [
+    [
+      97,
+      75,
+      92
+    ],
+    [
+      904,
+      863,
+      853
+    ],
+    [
+      560,
+      580,
+      596
+    ]
+  ],
+  "min_data_points_for_users": 231,
+  "max_data_points_for_users": 231,
+  "model_info": {
+    "model_class": "RandomClassifier",
+    "params": {}
+  },
+  "labels": [
+    9,
+    10,
+    11
+  ],
+  "features": [
+    "clothing",
+    "heartRate",
+    "t-nb",
+    "t-ubi",
+    "rh-ubi"
+  ],
+  "datetime_of_experiment_run": "2026-09-04T15:34:54.708084",
+  "experiment_name": "random_classifier"
+}

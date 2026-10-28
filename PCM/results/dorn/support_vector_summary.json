@@ -1,0 +1,58 @@
+{
+  "average_f1_micro_over_all_folds_and_all_users": 0.7338066604995375,
+  "average_f1_macro_over_all_folds_and_all_users": 0.3693973629319586,
+  "average_kappa_quadratic_over_all_folds_and_all_users": 0.03022938643077721,
+  "confusion_matrix_over_all_folds_and_all_users": [
+    [
+      27,
+      164,
+      73
+    ],
+    [
+      16,
+      2363,
+      241
+    ],
+    [
+      7,
+      729,
+      1000
+    ]
+  ],
+  "min_data_points_for_users": 231,
+  "max_data_points_for_users": 231,
+  "model_info": {
+    "model_class": "SVC",
+    "params": {
+      "C": 1.0,
+      "break_ties": false,
+      "cache_size": 200,
+      "class_weight": null,
+      "coef0": 0.0,
+      "decision_function_shape": "ovr",
+      "degree": 3,
+      "gamma": "scale",
+      "kernel": "rbf",
+      "max_iter": -1,
+      "probability": false,
+      "random_state": 42,
+      "shrinking": true,
+      "tol": 0.001,
+      "verbose": false
+    }
+  },
+  "labels": [
+    9,
+    10,
+    11
+  ],
+  "features": [
+    "clothing",
+    "heartRate",
+    "t-nb",
+    "t-ubi",
+    "rh-ubi"
+  ],
+  "datetime_of_experiment_run": "2026-05-05T10:12:43.008648",
+  "experiment_name": "support_vector"
+}

@@ -1,0 +1,45 @@
+{
+  "average_f1_micro_over_all_folds_and_all_users": 0.7412443130198522,
+  "average_f1_macro_over_all_folds_and_all_users": 0.3343160686140368,
+  "average_kappa_quadratic_over_all_folds_and_all_users": 0.0,
+  "confusion_matrix_over_all_folds_and_all_users": [
+    [
+      391,
+      744,
+      20
+    ],
+    [
+      310,
+      5335,
+      89
+    ],
+    [
+      92,
+      798,
+      201
+    ]
+  ],
+  "min_data_points_for_users": 41,
+  "max_data_points_for_users": 289,
+  "model_info": {
+    "model_class": "MajorityClassParrot",
+    "params": {
+      "majority_class": null
+    }
+  },
+  "labels": [
+    9,
+    10,
+    11
+  ],
+  "features": [
+    "t_ubi",
+    "rh_ubi",
+    "hr_ubi",
+    "bpm_time_diff_log",
+    "CO2",
+    "activity"
+  ],
+  "datetime_of_experiment_run": "2026-05-06T10:01:15.636573",
+  "experiment_name": "majority_class_parrot"
+}

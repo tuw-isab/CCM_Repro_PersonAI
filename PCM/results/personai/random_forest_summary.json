@@ -1,0 +1,63 @@
+{
+  "average_f1_micro_over_all_folds_and_all_users": 0.7414572326581693,
+  "average_f1_macro_over_all_folds_and_all_users": 0.42122602984820234,
+  "average_kappa_quadratic_over_all_folds_and_all_users": 0.10394890488914353,
+  "confusion_matrix_over_all_folds_and_all_users": [
+    [
+      398,
+      701,
+      56
+    ],
+    [
+      305,
+      5226,
+      203
+    ],
+    [
+      67,
+      675,
+      349
+    ]
+  ],
+  "min_data_points_for_users": 41,
+  "max_data_points_for_users": 289,
+  "model_info": {
+    "model_class": "RandomForestClassifier",
+    "params": {
+      "bootstrap": true,
+      "ccp_alpha": 0.0,
+      "class_weight": null,
+      "criterion": "gini",
+      "max_depth": null,
+      "max_features": "sqrt",
+      "max_leaf_nodes": null,
+      "max_samples": null,
+      "min_impurity_decrease": 0.0,
+      "min_samples_leaf": 1,
+      "min_samples_split": 2,
+      "min_weight_fraction_leaf": 0.0,
+      "monotonic_cst": null,
+      "n_estimators": 100,
+      "n_jobs": null,
+      "oob_score": false,
+      "random_state": 42,
+      "verbose": 0,
+      "warm_start": false
+    }
+  },
+  "labels": [
+    9,
+    10,
+    11
+  ],
+  "features": [
+    "t_ubi",
+    "rh_ubi",
+    "hr_ubi",
+    "bpm_time_diff_log",
+    "CO2",
+    "activity"
+  ],
+  "datetime_of_experiment_run": "2026-05-06T10:02:28.507275",
+  "experiment_name": "random_forest"
+}

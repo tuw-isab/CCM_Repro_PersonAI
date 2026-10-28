@@ -1,0 +1,59 @@
+{
+  "average_f1_micro_over_all_folds_and_all_users": 0.7432867448881688,
+  "average_f1_macro_over_all_folds_and_all_users": 0.34556926178075265,
+  "average_kappa_quadratic_over_all_folds_and_all_users": 0.011148395929980343,
+  "confusion_matrix_over_all_folds_and_all_users": [
+    [
+      334,
+      802,
+      19
+    ],
+    [
+      234,
+      5426,
+      74
+    ],
+    [
+      77,
+      818,
+      196
+    ]
+  ],
+  "min_data_points_for_users": 41,
+  "max_data_points_for_users": 289,
+  "model_info": {
+    "model_class": "SVC",
+    "params": {
+      "C": 1.0,
+      "break_ties": false,
+      "cache_size": 200,
+      "class_weight": null,
+      "coef0": 0.0,
+      "decision_function_shape": "ovr",
+      "degree": 3,
+      "gamma": "scale",
+      "kernel": "rbf",
+      "max_iter": -1,
+      "probability": false,
+      "random_state": 42,
+      "shrinking": true,
+      "tol": 0.001,
+      "verbose": false
+    }
+  },
+  "labels": [
+    9,
+    10,
+    11
+  ],
+  "features": [
+    "t_ubi",
+    "rh_ubi",
+    "hr_ubi",
+    "bpm_time_diff_log",
+    "CO2",
+    "activity"
+  ],
+  "datetime_of_experiment_run": "2026-05-06T10:02:34.430336",
+  "experiment_name": "support_vector"
+}

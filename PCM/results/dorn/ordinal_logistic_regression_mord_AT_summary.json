@@ -1,0 +1,46 @@
+{
+  "average_f1_micro_over_all_folds_and_all_users": 0.7724976873265496,
+  "average_f1_macro_over_all_folds_and_all_users": 0.5271308930003343,
+  "average_kappa_quadratic_over_all_folds_and_all_users": 0.26409357303434083,
+  "confusion_matrix_over_all_folds_and_all_users": [
+    [
+      104,
+      144,
+      16
+    ],
+    [
+      25,
+      2305,
+      290
+    ],
+    [
+      9,
+      567,
+      1160
+    ]
+  ],
+  "min_data_points_for_users": 231,
+  "max_data_points_for_users": 231,
+  "model_info": {
+    "model_class": "LogisticAT",
+    "params": {
+      "alpha": 1.0,
+      "max_iter": 1000,
+      "verbose": 0
+    }
+  },
+  "labels": [
+    9,
+    10,
+    11
+  ],
+  "features": [
+    "clothing",
+    "heartRate",
+    "t-nb",
+    "t-ubi",
+    "rh-ubi"
+  ],
+  "datetime_of_experiment_run": "2026-05-05T10:13:23.254140",
+  "experiment_name": "ordinal_logistic_regression_mord_AT"
+}

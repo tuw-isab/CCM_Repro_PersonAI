@@ -1,0 +1,26 @@
+##### experiment wide
+name: 'personai_pmv_l1o'
+iterations: 100
+seed: 13
+
+##### data specific
+dataset_name: 'personai'
+dataset: 'data/personai/final_main_dataset_no_missing_ALLENC_with_time_and_hr_age.csv'
+dataset_survey: 'data/personai/cold_start_data_full_survey.csv'
+dataset_type: 'sensor' # 'sensor', 'sensor_qns'
+target_column: 'thermal_cozie'
+target_values:
+    - 9.0
+    - 10.0 
+    - 11.0
+train_test_ratio: 0.8
+categorical_features: [] # NOTE: can be update accordingly
+
+# questions are only used when the `dataset_type` is `sensor_qns`
+qns_encoding_idx: []
+qns_categories: []
+gamma: 0.0
+scorer: 'f1_micro'
+
+leave_one_out: True  #change: added to match our new approach, by setting to false, it will run the original code with iterations
+

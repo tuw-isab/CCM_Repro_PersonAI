@@ -1,0 +1,246 @@
+import numpy as np
+import pandas as pd
+
+from scipy.spatial.distance import jensenshannon
+from utils import load_variable, clf_metrics, train_model
+
+class UserProfile:
+    def __init__(
+        self,
+        feedback_sim="feedback-dist",
+        divergence="jensen-shannon",
+        qns_sim="cosine",
+        model="rdf",
+        scorer="f1_micro",
+        use_val=True,
+        folder_str="",
+        precomputed_pcm="True",
+        train_users=[],
+        dataset_type="sensor_qns",
+        dataset_name="cresh",
+        resample_ccm = False,
+        parameter_finetuning = True,
+        *,
+        variable_features,
+        pcm_file,
+        excluded_users,
+    ):
+        """Load parameters"""
+        self.feedback_sim = feedback_sim
+        self.divergence = divergence
+        self.qns_sim = qns_sim
+        self.model = model
+        self.scorer = scorer
+        self.use_val = use_val
+        self.folder_str = folder_str  # e.g., '20201008/iter0_'
+        # if PCM for all uses has been calculated before
+        self.precomputed_pcm = precomputed_pcm
+        self.train_users = train_users
+        self.dataset_type = dataset_type
+        self.dataset_name = dataset_name
+        self.resample_ccm = resample_ccm
+        self.parameter_finetuning = parameter_finetuning
+        # features that change within a user; the only inputs of the personal comfort models
+        self.variable_features = variable_features
+        # stem of the stored PCM pickle (relative to models/, no .pickle extension)
+        self.pcm_file = pcm_file
+        # user_ids to leave out of the PCM/cross-model computations entirely (dataset-specific quirks)
+        self.excluded_users = excluded_users
+
+    def feedback_profiling(self, dataframe):
+        """Calculates the appropriate user similarity from feedback datapoints"""
+        df = dataframe.copy()
+
+        if self.feedback_sim == "feedback-dist":
+            # users' feedback datapoints distribution similarity
+            df = self.df_affinity(df)
+
+        return df
+
+    def df_affinity(self, dataframe):
+        """
+        Calculates a square matrix [n x n] where the values are the
+        divergence of two users. Identical user means a divergence of 0
+        (thus the diagonal is 0).
+        The input `dataframe` has the discrete distribution of
+        feedback responses as columns and users as rows.
+        """
+        df = dataframe.copy()
+        list_dist_div = []
+        user_id_list = df.index.tolist()
+        epsilon = 1e-6  # small constant
+
+        # divergence
+        for _, p_row in df.iterrows():
+            curr_dist_div = []
+
+            for _, q_row in df.iterrows():
+                if self.divergence == "jensen-shannon":
+                    # this will return a symmetric matrix
+                    curr_dist_div.append(jensenshannon(p_row, q_row))
+                elif self.divergence == "kl":
+                    # if any class is 0, add a small constant
+                    if (0.0 in p_row.values) or (0.0 in q_row.values):
+                        p_row += epsilon
+                        q_row += epsilon
+                    curr_dist_div.append(self.kl_divergence(p_row, q_row))
+                else:
+                    print(f"{self.divergence} is not a valid divergence")
+
+            list_dist_div.append(curr_dist_div)
+
+        df_dist_div = pd.DataFrame(
+            list_dist_div, index=user_id_list, columns=user_id_list
+        )
+
+        return df_dist_div
+
+    def kl_divergence(self, p, q):
+        return np.sum(np.where(p != 0, p * np.log(p / q), 0))
+
+    def cross_model_performance(self, dataframe):
+        """
+        Calculates the cross-model performance of each user against all
+            remaining users
+
+        Args:
+            dataframe: A dataframe with all the data and labels
+        Returns:
+            df_cross_performance: A square dataframe with the cross-model
+                performance
+            dict_pcm: Dictionary where the keys are `user_id` and the values
+                the tuned model
+            dict_pcm_acc: Dictionary where the keys are the `user_id` and the
+                values is the accuracy the model
+        """
+        cross_model_perf_list = []
+        df = dataframe.copy()
+        user_list = df["user_id"].unique()
+
+        # calculating the CV-tuned for each user is what takes most times
+        if self.precomputed_pcm:
+            dict_pcm_all = load_variable(f"models/{self.pcm_file}")
+            dict_pcm_acc_all = {}
+            try:
+                dict_pcm_acc_all["f1_micro"] = load_variable(f"models/{self.pcm_file}_acc_f1_micro")
+                dict_pcm_acc_all["cohen_kappa"] = load_variable(f"models/{self.pcm_file}_acc_cohen_kappa")
+            except FileNotFoundError:
+                # these values are currently unused (replaced by 0 below) - the file is optional
+                dict_pcm_acc_all["f1_micro"], dict_pcm_acc_all["cohen_kappa"] = {}, {}
+
+            # filter only the PCMs of train users
+            dict_pcm, dict_pcm_acc = {}, {}
+            dict_pcm_acc["f1_micro"], dict_pcm_acc["cohen_kappa"] = {}, {}
+            for user, _ in dict_pcm_all.items():
+
+                if user in self.excluded_users:
+                    continue
+                if user in self.train_users:
+                    dict_pcm[user] = dict_pcm_all[user]
+                    ###### CHANGED FOR READING PCM
+                    dict_pcm_acc["f1_micro"][user] = 0#dict_pcm_acc_all["f1_micro"][user]
+                    dict_pcm_acc["cohen_kappa"][user] = 0#dict_pcm_acc_all["cohen_kappa"][user]
+
+            # stored PCMs must have been trained on exactly the configured variable features
+            for user, pcm in dict_pcm.items():
+                assert pcm.n_features_in_ == len(self.variable_features), (
+                    f"stored PCM of {user} expects {pcm.n_features_in_} features, "
+                    f"config variable_features has {len(self.variable_features)}"
+                )
+        else:
+            # find pcm for each user
+            # print(df)
+            dict_pcm, dict_pcm_acc = self.find_pcm(df,resample_ccm=self.resample_ccm,parameter_finetuning=self.parameter_finetuning)
+        print("done finding pcm")
+        target_column = df.columns[-1]  # the label is always the last column
+        # cross-pcm performance
+        for _, curr_model in dict_pcm.items():
+            curr_performance = []  # cross-model performance user vs user_list
+            for user in user_list:
+                if user in self.excluded_users:
+                    continue
+
+                df_user = df[df["user_id"] == user]
+                # print(df_user.columns)
+                df_user = df_user[self.variable_features + [target_column]]
+                #print(f"cross_model_performance: Training model for user {user}")  #track progress
+
+                # print(df_user.iloc[:, 0 : df_user.shape[1] - 1])
+                X = np.array(
+                    df_user.iloc[:, 0 : df_user.shape[1] - 1] # all but last column (thermal cozy, would be better to do it by column name... maybe later)
+                )  # minus 1 for the target column
+                y = np.array(df_user.iloc[:, -1])
+
+                # print(curr_model.feature_importances_)
+                # print(X[0])
+
+                y_pred = curr_model.predict(X)
+                cross_acc, _ = clf_metrics(
+                    y, y_pred, conf_matrix_print=False, scorer=self.scorer
+                )  # acc [0, 1]
+                curr_performance.append(cross_acc)
+
+            cross_model_perf_list.append(curr_performance)
+
+        # identical users means performance = 1
+        df_cross_performance = pd.DataFrame(
+            cross_model_perf_list, index=dict_pcm.keys(), columns=user_list
+        )
+
+        return df_cross_performance, dict_pcm, dict_pcm_acc
+
+    def find_pcm(self, dataframe, verbose=False,resample_ccm = False,parameter_finetuning = True):
+        """Find the personal comfort model of each user based on CV.
+        Assumes a column `user_id` exists.
+
+        Args:
+            dataframe: A DataFrame with all data and labels as last column
+
+        Returns:
+            user_pcm: Dictionary with the model (value) for each user (key)
+            user_pcm_acc: Dictionary with the model accuracy (value) for each
+                user (key)
+        """
+
+        df = dataframe.copy()
+        # personal models only use the features that change within a user
+        df = df[["user_id"] + self.variable_features + [df.columns[-1]]]
+
+        user_list = df["user_id"].unique()
+        if verbose:
+            print(
+                f"Features used for modeling (`user_id` and the last feature are not used): {df.columns.values}"
+            )
+
+        user_pcm = {}
+        user_pcm_acc = {}  # hardcoded for two metrics
+        user_pcm_acc["f1_micro"] = {}
+        user_pcm_acc["cohen_kappa"] = {}
+
+        # for every user, do CV
+        for user in user_list:
+            df_user = df[df["user_id"] == user]
+
+            #df_user = df_user.drop(["user_id"], axis=1) # now done in train_model
+            #print(f"find_pcm: Training model for user {user}")  #to track progress
+
+            if len(df_user) < 5:
+                print('not enough entries to analyse for user' + str(user))
+                continue
+            fig_name = self.folder_str + str(user)
+            #print(df_user)
+            model_user, model_user_acc, _ = train_model(
+                dataframe=df_user,
+                stratified=True,
+                model=self.model,
+                scorer=self.scorer,
+                use_val=self.use_val,
+                fig_name=fig_name,
+                resample_ccm=resample_ccm,
+                parameter_finetuning=parameter_finetuning,
+            )
+            user_pcm[user] = model_user
+            user_pcm_acc["f1_micro"][user] = model_user_acc["f1_micro"]
+            user_pcm_acc["cohen_kappa"][user] = model_user_acc["cohen_kappa"]
+
+        return user_pcm, user_pcm_acc

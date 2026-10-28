@@ -1,0 +1,127 @@
+# in this version, if questions-based label missing, we skip user (no crash) in cohort.py
+
+##### experiment wide #########################################################
+
+iterations: 20    # keep 30+ for real runs
+seed: 10
+
+##### data paths ##############################################################
+dataset_name: 'Dorn'  # arbitrary label, kept for logging only
+dataset: 'dorn/DORN_env_phy_231.csv'
+# one survey file serves all DORN runs: fixed Big Five scores + sex + swls (built in preprocessing/preprocessing.ipynb).
+# Runs that cluster automatically on the survey choose their columns with `qns_features` below (`sex` is text, so leave it out there).
+dataset_survey: 'dorn/DORN_qns_b5p_calc_sex_swls_fixed.csv'
+dataset_with_time: None
+data_set_with_time_bool: False  # DORN has no with-time dataset
+
+##### precomputed PCM file ####################################################
+# stem of the stored PCM pickle, relative to models/ and without the .pickle extension
+# (only used when precomputed_pcm: True; the matching *_acc_f1_micro / *_acc_cohen_kappa
+# files are loaded too if present, but their content is unused)
+pcm_file: 'dorn/dict_pcm_rdf_sensor_at_f1_micro_dorn'
+
+##### excluded users ###########################################################
+# user_ids to leave out of the PCM / cross-model computations entirely
+# (dataset-specific quirks; [] for a dataset with none to exclude)
+excluded_users: []
+
+##### automatic-clustering survey features ####################################
+# columns of dataset_survey used for automatic ('-1') clustering; only matters
+# when cluster_forced: '-1' ([] = use every column in the dataset_survey file)
+qns_features: []
+
+##### occupant filter (optional) ###############################################
+# null = all occupants. Otherwise only occupants at/below the lower or at/above the upper
+# percentile of `column` stay, in BOTH the sensor and the survey data (as the original
+# CCM did for its HSPS/SWLS cohorts), e.g.
+# extremes_filter: {column: swls, lower_q: 0.25, upper_q: 0.75}
+# With the filter on, set `iterations` <= the number of kept occupants (leave-one-out).
+extremes_filter: null
+
+dataset_type: 'sensor'
+target_column: 'thermal_cozie'
+target_values:
+  - 9.0
+  - 10.0
+  - 11.0
+
+##### model input features ####################################################
+variable_features:             # change within a person; used by ALL models (personal models, cross-model performance, pooled models)
+  - 'clothing'
+  - 'heartRate'
+  - 't-nb'
+  - 't-ubi'
+  - 'rh-ubi'
+fixed_features:                # constant within a person; ONLY used by the pooled models (general baseline + cohort models)
+  - 'height'
+  - 'weight'
+  - 'sex'
+
+##### split parameters ########################################################
+leave_1_out: True
+train_test_ratio: 0.8 
+test_user_data: 1              # 1, 0.5, 0.25, 0.125, 0.0625 | 1, 3, 5, 7 # 1 = use all env samples per test user
+
+##### environmental (sensor) categorical features ############################
+categorical_features:          # these stay because the RF models still need them
+  - 'sex'
+  - 'clothing'
+
+feedback_sim: 'feedback-dist'  # 'feedback-dist', 'baseline'
+
+##### cold-start clustering inputs ###########################################
+# Categorical columns *inside* at_qns_psych.csv (0-based indices)
+
+# Only needed for psych surveys — remove if not using at_qns_psych.csv
+qns_encoding_idx: []
+qns_categories: []          # only needed when you pre-specify category orders
+gamma: 0.0                  # leave at 0 unless you use hybrid similarity
+
+
+##### user-profiling options ##################################################
+divergence: 'jensen-shannon'
+qns_sim: 'cosine'           # cosine or euclidean
+
+##### modeling ###############################################################
+model: 'rdf'                # 'rdf', 'xgb'  # random-forest
+scorer: 'f1_micro'
+use_val: False              # by default should be False
+parameter_finetuning: False
+
+##### cohort creation ###############################stionnaire, γ=cross-model
+
+name: dorn_cold_sex
+
+coefficients: # can take plenty different values (Feedback, Qns, CrossPerf) # α=feedback, β=que
+    - 0.5 # alpha
+    - 0 # beta
+    - 0.5 # gamma
+
+cluster_algo: 'kmeans'           # 'spectral', 'kprototype', 'kmeans' # psych-only mixed-data clustering
+cluster_num: 2                    # can take many different values
+cluster_forced:  'sex'  #           # automatic  #'-1', 'sex', 'sensitive_thermal_env', 'subtleties_awareness', 'stimuli_awareness' [specific columns]
+cluster_assign: 'questions'   # 'performance', 'questions', 'performance-noretrain' 
+cluster_predict_criteria: 'cold'  # 'cold', 'warm'
+worst_cluster: False             # leave at 1 unless you intentionally mis-assign ??
+
+##### speed-ups / debugging ###################################################
+precomputed_pcm: True  # by default should be True # PCM pre-computed makes experiment runs faster
+precomputed_test_users: False  # by default should be False # aux debugging
+
+##### resampling options ###################################################
+resample_ccm: False
+SMOTENC_class: False
+SMOTENC_user : False
+
+class_limit_remove: 0 # if >0 will remove participants that have a class with less entries COMPLETELY from the code
+
+class_limit_no_resampling: False #if True will not resample any classes for users where one class has less than class_min_resampling entries
+                                 #if False will not resample the class that has less than class_min_resampling entries
+                                 # BUT will resample other classes
+class_min_resampling: 5 #!!! this limit is also how many k neighbors are used for SMOTE
+
+downsample: False
+downsample_60: False
+min_total_number : 0 #MIN 10 if you downsample!!!
+
+SMOTENC_all_class: False

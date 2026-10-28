@@ -1,0 +1,47 @@
+{
+  "average_f1_micro_over_all_folds_and_all_users": 0.7436798777347179,
+  "average_f1_macro_over_all_folds_and_all_users": 0.40812640867709365,
+  "average_kappa_quadratic_over_all_folds_and_all_users": 0.10650382768906042,
+  "confusion_matrix_over_all_folds_and_all_users": [
+    [
+      392,
+      725,
+      38
+    ],
+    [
+      282,
+      5292,
+      160
+    ],
+    [
+      54,
+      717,
+      320
+    ]
+  ],
+  "min_data_points_for_users": 41,
+  "max_data_points_for_users": 289,
+  "model_info": {
+    "model_class": "LogisticIT",
+    "params": {
+      "alpha": 1.0,
+      "max_iter": 1000,
+      "verbose": 0
+    }
+  },
+  "labels": [
+    9,
+    10,
+    11
+  ],
+  "features": [
+    "t_ubi",
+    "rh_ubi",
+    "hr_ubi",
+    "bpm_time_diff_log",
+    "CO2",
+    "activity"
+  ],
+  "datetime_of_experiment_run": "2026-05-06T10:05:19.899772",
+  "experiment_name": "ordinal_logistic_regression_mord_IT"
+}

@@ -1,0 +1,51 @@
+{
+  "average_f1_micro_over_all_folds_and_all_users": 0.7694958371877892,
+  "average_f1_macro_over_all_folds_and_all_users": 0.5029620803929062,
+  "average_kappa_quadratic_over_all_folds_and_all_users": 0.23573671328286547,
+  "confusion_matrix_over_all_folds_and_all_users": [
+    [
+      87,
+      165,
+      12
+    ],
+    [
+      13,
+      2364,
+      243
+    ],
+    [
+      3,
+      629,
+      1104
+    ]
+  ],
+  "min_data_points_for_users": 231,
+  "max_data_points_for_users": 231,
+  "model_info": {
+    "model_class": "OrdinalRidge",
+    "params": {
+      "alpha": 1.0,
+      "copy_X": true,
+      "fit_intercept": true,
+      "max_iter": null,
+      "positive": false,
+      "random_state": null,
+      "solver": "auto",
+      "tol": 0.0001
+    }
+  },
+  "labels": [
+    9,
+    10,
+    11
+  ],
+  "features": [
+    "clothing",
+    "heartRate",
+    "t-nb",
+    "t-ubi",
+    "rh-ubi"
+  ],
+  "datetime_of_experiment_run": "2026-05-05T10:13:24.747908",
+  "experiment_name": "ordinal_ridge_mord"
+}

@@ -1,0 +1,43 @@
+{
+  "average_f1_micro_over_all_folds_and_all_users": 0.3273594424919452,
+  "average_f1_macro_over_all_folds_and_all_users": 0.2468626091789655,
+  "average_kappa_quadratic_over_all_folds_and_all_users": -0.010158197136063505,
+  "confusion_matrix_over_all_folds_and_all_users": [
+    [
+      392,
+      361,
+      402
+    ],
+    [
+      1988,
+      1868,
+      1878
+    ],
+    [
+      386,
+      343,
+      362
+    ]
+  ],
+  "min_data_points_for_users": 41,
+  "max_data_points_for_users": 289,
+  "model_info": {
+    "model_class": "RandomClassifier",
+    "params": {}
+  },
+  "labels": [
+    9,
+    10,
+    11
+  ],
+  "features": [
+    "t_ubi",
+    "rh_ubi",
+    "hr_ubi",
+    "bpm_time_diff_log",
+    "CO2",
+    "activity"
+  ],
+  "datetime_of_experiment_run": "2026-09-04T15:34:36.582163",
+  "experiment_name": "random_classifier"
+}
